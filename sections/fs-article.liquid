@@ -1,0 +1,88 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width" style="max-width: 800px;">
+    <nav class="fs-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="fs-breadcrumb__sep">/</span>
+      <a href="{{ blog.url }}">{{ blog.title }}</a>
+      <span class="fs-breadcrumb__sep">/</span>
+      <span>{{ article.title }}</span>
+    </nav>
+
+    <article>
+      <header style="margin-bottom: var(--fs-space-xl);">
+        <h1 class="fs-section__title" style="margin-bottom: var(--fs-space-sm);">{{ article.title }}</h1>
+        <div style="font-size: var(--fs-font-size-sm); color: var(--fs-color-text-light);">
+          {%- if section.settings.show_date -%}
+            <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%B %d, %Y' }}</time>
+          {%- endif -%}
+          {%- if section.settings.show_author and article.author -%}
+            <span> &middot; {{ article.author }}</span>
+          {%- endif -%}
+        </div>
+      </header>
+
+      {%- if article.image -%}
+        <div style="margin-bottom: var(--fs-space-xl);">
+          {{ article.image | image_url: width: 1200 | image_tag: loading: 'eager', sizes: '(min-width: 800px) 800px, 100vw', widths: '400,600,800,1200', alt: article.title }}
+        </div>
+      {%- endif -%}
+
+      <div class="fs-page__content rte">
+        {{ article.content }}
+      </div>
+
+      {%- if blog.comments_enabled? -%}
+        <div style="margin-top: var(--fs-space-3xl); border-top: 1px solid var(--fs-color-border-light); padding-top: var(--fs-space-xl);">
+          <h3>Comments ({{ article.comments_count }})</h3>
+
+          {%- for comment in article.comments -%}
+            <div style="margin: var(--fs-space-md) 0; padding: var(--fs-space-md); background: var(--fs-color-bg-secondary);">
+              <p style="font-weight: var(--fs-font-weight-semibold); margin-bottom: var(--fs-space-xs);">{{ comment.author }}</p>
+              <p style="font-size: var(--fs-font-size-sm); color: var(--fs-color-text-secondary);">{{ comment.content }}</p>
+            </div>
+          {%- endfor -%}
+
+          {% form 'new_comment', article %}
+            <div style="margin-top: var(--fs-space-lg);">
+              <h4>Leave a comment</h4>
+              {%- if form.errors -%}
+                <div style="color: var(--fs-color-sale); margin-bottom: var(--fs-space-md);">{{ form.errors | default_errors }}</div>
+              {%- endif -%}
+              {%- if form.posted_successfully? -%}
+                <p style="color: green; margin-bottom: var(--fs-space-md);">Your comment was posted successfully.</p>
+              {%- endif -%}
+              <div style="display: grid; gap: var(--fs-space-md); margin-top: var(--fs-space-md);">
+                <input type="text" name="comment[author]" placeholder="Name" required class="fs-newsletter__input" style="background: #fff;">
+                <input type="email" name="comment[email]" placeholder="Email" required class="fs-newsletter__input" style="background: #fff;">
+                <textarea name="comment[body]" placeholder="Comment" required rows="4" class="fs-newsletter__input" style="background: #fff; resize: vertical;"></textarea>
+                <button type="submit" class="fs-btn fs-btn--primary">Post Comment</button>
+              </div>
+            </div>
+          {% endform %}
+        </div>
+      {%- endif -%}
+    </article>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Article",
+  "tag": "div",
+  "class": "fs-article-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

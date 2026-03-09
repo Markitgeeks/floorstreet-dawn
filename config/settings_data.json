@@ -1,0 +1,16 @@
+{
+  "current": {
+    "color_accent": "#1c1c1c",
+    "color_text": "#000000",
+    "color_background": "#ffffff",
+    "color_sale": "#c62828",
+    "social_instagram_link": "https://instagram.com/floorstreet",
+    "social_tiktok_link": "https://tiktok.com/@floorstreet",
+    "social_youtube_link": "",
+    "social_facebook_link": "https://facebook.com/floorstreet",
+    "cart_type": "page",
+    "show_cart_note": false,
+    "sections": {},
+    "content_for_index": []
+  }
+}

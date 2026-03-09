@@ -1,0 +1,48 @@
+{%- assign columns = section.settings.columns_desktop | default: 3 -%}
+
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <h1 class="fs-section__title">Collections</h1>
+
+    <div class="fs-collections-grid" style="--fs-columns: {{ columns }};">
+      {%- for collection in collections -%}
+        {%- if collection.products.size > 0 -%}
+          <a href="{{ collection.url }}" class="fs-collection-card">
+            <div class="fs-collection-card__image">
+              {%- if collection.image -%}
+                {{ collection.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 33vw, (min-width: 700px) 50vw, 100vw', widths: '300,400,600', alt: collection.title }}
+              {%- elsif collection.products.first.featured_image -%}
+                {{ collection.products.first.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: collection.title }}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag }}
+              {%- endif -%}
+            </div>
+            <div class="fs-collection-card__info">
+              <h2 class="fs-collection-card__title">{{ collection.title }}</h2>
+              <span class="fs-collection-card__count">{{ collection.products_count }} products</span>
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS List Collections",
+  "tag": "div",
+  "class": "fs-list-collections-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ]
+}
+{% endschema %}

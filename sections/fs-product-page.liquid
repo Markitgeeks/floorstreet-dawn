@@ -1,0 +1,667 @@
+{%- liquid
+  assign product = product
+  assign current_variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if current_variant.compare_at_price > current_variant.price
+    assign on_sale = true
+    assign save_amount = current_variant.compare_at_price | minus: current_variant.price
+    assign save_percent = save_amount | times: 100.0 | divided_by: current_variant.compare_at_price | round
+  endif
+-%}
+
+<section class="fs-product" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <!-- Breadcrumbs -->
+    <nav class="fs-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="fs-breadcrumb__sep">/</span>
+      {%- if collection -%}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+        <span class="fs-breadcrumb__sep">/</span>
+      {%- endif -%}
+      <span>{{ product.title }}</span>
+    </nav>
+
+    <div class="fs-product__layout">
+      <!-- Gallery -->
+      <div class="fs-product__gallery">
+        <div class="fs-product__main-image" id="fs-main-image">
+          {%- if product.featured_image -%}
+            {{ product.featured_image | image_url: width: 1000 | image_tag:
+              class: 'fs-product__image',
+              loading: 'eager',
+              sizes: '(min-width: 1000px) 50vw, 100vw',
+              widths: '400,600,800,1000',
+              alt: product.title
+            }}
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag }}
+          {%- endif -%}
+        </div>
+
+        {%- if product.images.size > 1 -%}
+          <div class="fs-product__thumbnails">
+            {%- for image in product.images -%}
+              <button class="fs-product__thumb{% if forloop.first %} is-active{% endif %}"
+                data-image-url="{{ image | image_url: width: 1000 }}"
+                data-index="{{ forloop.index0 }}"
+                aria-label="View image {{ forloop.index }}"
+              >
+                {{ image | image_url: width: 100 | image_tag: loading: 'lazy', alt: product.title }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Product Info -->
+      <div class="fs-product__info">
+        {%- if product.vendor != blank -%}
+          <p class="fs-product__vendor">{{ product.vendor }}</p>
+        {%- endif -%}
+
+        <h1 class="fs-product__title">{{ product.title }}</h1>
+
+        <!-- Price -->
+        <div class="fs-product__price-row">
+          <span class="fs-product__price">{{ current_variant.price | money }}</span>
+          {%- if on_sale -%}
+            <span class="fs-product__compare-price">{{ current_variant.compare_at_price | money }}</span>
+            <span class="fs-product__save-badge">Save {{ save_amount | money }} ({{ save_percent }}%)</span>
+          {%- endif -%}
+        </div>
+
+        {%- if current_variant.unit_price -%}
+          <p class="fs-product__unit-price">
+            {{ current_variant.unit_price | money }} / {{ current_variant.unit_price_measurement.reference_value }}{{ current_variant.unit_price_measurement.reference_unit }}
+          </p>
+        {%- endif -%}
+
+        {%- if product.metafields.custom.price_per_sqm != blank -%}
+          <p class="fs-product__unit-price">
+            {{ product.metafields.custom.price_per_sqm }} per m&sup2;
+          </p>
+        {%- endif -%}
+
+        <!-- Variant Picker -->
+        {%- unless product.has_only_default_variant -%}
+          <product-form class="fs-product__form-wrapper">
+            {%- form 'product', product, id: 'fs-product-form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+              {%- for option in product.options_with_values -%}
+                <div class="fs-product__option">
+                  <label class="fs-product__option-label">{{ option.name }}</label>
+                  <div class="fs-product__option-values">
+                    {%- for value in option.values -%}
+                      <label class="fs-variant-swatch{% if option.selected_value == value %} is-selected{% endif %}">
+                        <input type="radio"
+                          name="{{ option.name }}"
+                          value="{{ value | escape }}"
+                          {% if option.selected_value == value %}checked{% endif %}
+                          data-option-position="{{ option.position }}"
+                        >
+                        <span>{{ value }}</span>
+                      </label>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endfor -%}
+
+              <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+              <!-- Quantity + Add to Cart -->
+              <div class="fs-product__actions">
+                <div class="fs-product__quantity">
+                  <label class="visually-hidden" for="fs-qty">Quantity</label>
+                  <button type="button" class="fs-qty-btn" data-action="decrease" aria-label="Decrease quantity">-</button>
+                  <input type="number" id="fs-qty" name="quantity" value="1" min="1" class="fs-qty-input">
+                  <button type="button" class="fs-qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+                </div>
+
+                <button type="submit" class="fs-btn fs-btn--primary fs-btn--lg fs-product__add-btn"
+                  {% unless current_variant.available %}disabled{% endunless %}
+                >
+                  {%- if current_variant.available -%}
+                    Add to Cart
+                  {%- else -%}
+                    Sold Out
+                  {%- endif -%}
+                </button>
+              </div>
+            {%- endform -%}
+          </product-form>
+        {%- else -%}
+          {%- form 'product', product, id: 'fs-product-form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+            <input type="hidden" name="id" value="{{ current_variant.id }}">
+            <div class="fs-product__actions">
+              <div class="fs-product__quantity">
+                <button type="button" class="fs-qty-btn" data-action="decrease" aria-label="Decrease quantity">-</button>
+                <input type="number" id="fs-qty" name="quantity" value="1" min="1" class="fs-qty-input">
+                <button type="button" class="fs-qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+              </div>
+              <button type="submit" class="fs-btn fs-btn--primary fs-btn--lg fs-product__add-btn"
+                {% unless current_variant.available %}disabled{% endunless %}
+              >
+                {%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+              </button>
+            </div>
+          {%- endform -%}
+        {%- endunless -%}
+
+        <!-- Dynamic payment buttons (Apple Pay, Google Pay, etc.) -->
+        {%- if section.settings.show_dynamic_checkout -%}
+          <div class="fs-product__dynamic-checkout">
+            {{ form | payment_button }}
+          </div>
+        {%- endif -%}
+
+        <!-- Trust mini badges -->
+        <div class="fs-product__trust-row">
+          <div class="fs-product__trust-item">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Free Delivery</span>
+          </div>
+          <div class="fs-product__trust-item">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Price Match</span>
+          </div>
+          <div class="fs-product__trust-item">
+            <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Buy Now Pay Later</span>
+          </div>
+        </div>
+
+        <!-- Collapsible sections -->
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'description' -%}
+              <details class="fs-product__accordion" {{ block.shopify_attributes }}>
+                <summary class="fs-product__accordion-header">
+                  <span>{{ block.settings.heading | default: 'Description' }}</span>
+                  <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="fs-product__accordion-body">
+                  {{ product.description }}
+                </div>
+              </details>
+
+            {%- when 'specifications' -%}
+              <details class="fs-product__accordion" {{ block.shopify_attributes }}>
+                <summary class="fs-product__accordion-header">
+                  <span>{{ block.settings.heading | default: 'Specifications' }}</span>
+                  <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="fs-product__accordion-body">
+                  {%- if block.settings.specs_text != blank -%}
+                    {{ block.settings.specs_text }}
+                  {%- else -%}
+                    <table class="fs-specs-table">
+                      {%- if product.metafields.custom.thickness != blank -%}
+                        <tr><td>Thickness</td><td>{{ product.metafields.custom.thickness }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.width != blank -%}
+                        <tr><td>Width</td><td>{{ product.metafields.custom.width }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.length != blank -%}
+                        <tr><td>Length</td><td>{{ product.metafields.custom.length }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.material != blank -%}
+                        <tr><td>Material</td><td>{{ product.metafields.custom.material }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.coverage != blank -%}
+                        <tr><td>Coverage per pack</td><td>{{ product.metafields.custom.coverage }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.installation != blank -%}
+                        <tr><td>Installation</td><td>{{ product.metafields.custom.installation }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.waterproof != blank -%}
+                        <tr><td>Waterproof</td><td>{{ product.metafields.custom.waterproof }}</td></tr>
+                      {%- endif -%}
+                      {%- if product.metafields.custom.underfloor_heating != blank -%}
+                        <tr><td>Underfloor Heating</td><td>{{ product.metafields.custom.underfloor_heating }}</td></tr>
+                      {%- endif -%}
+                    </table>
+                  {%- endif -%}
+                </div>
+              </details>
+
+            {%- when 'shipping' -%}
+              <details class="fs-product__accordion" {{ block.shopify_attributes }}>
+                <summary class="fs-product__accordion-header">
+                  <span>{{ block.settings.heading | default: 'Shipping & Returns' }}</span>
+                  <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="fs-product__accordion-body">
+                  {{ block.settings.content }}
+                </div>
+              </details>
+
+            {%- when 'custom' -%}
+              <details class="fs-product__accordion" {{ block.shopify_attributes }}>
+                <summary class="fs-product__accordion-header">
+                  <span>{{ block.settings.heading }}</span>
+                  <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="fs-product__accordion-body">
+                  {{ block.settings.content }}
+                </div>
+              </details>
+          {%- endcase -%}
+        {%- endfor -%}
+
+        <!-- SKU -->
+        {%- if current_variant.sku != blank -%}
+          <p class="fs-product__sku">SKU: {{ current_variant.sku }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fs-breadcrumb {
+    padding: var(--fs-space-md) 0;
+    font-size: var(--fs-font-size-sm);
+    color: var(--fs-color-text-light);
+  }
+  .fs-breadcrumb a { color: var(--fs-color-text-secondary); }
+  .fs-breadcrumb a:hover { color: var(--fs-color-text); }
+  .fs-breadcrumb__sep { margin: 0 0.375rem; }
+
+  .fs-product__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--fs-space-xl);
+    padding-bottom: var(--fs-space-3xl);
+  }
+
+  @media (min-width: 1000px) {
+    .fs-product__layout {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--fs-space-2xl);
+    }
+  }
+
+  .fs-product__gallery { position: relative; }
+
+  .fs-product__main-image {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--fs-color-bg-secondary);
+  }
+
+  .fs-product__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: zoom-in;
+  }
+
+  .fs-product__thumbnails {
+    display: flex;
+    gap: var(--fs-space-sm);
+    margin-top: var(--fs-space-sm);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .fs-product__thumb {
+    width: 64px;
+    height: 64px;
+    border: 2px solid transparent;
+    background: var(--fs-color-bg-secondary);
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .fs-product__thumb.is-active {
+    border-color: var(--fs-color-accent);
+  }
+
+  .fs-product__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fs-product__vendor {
+    font-size: var(--fs-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--fs-letter-spacing);
+    color: var(--fs-color-text-light);
+    margin-bottom: var(--fs-space-xs);
+  }
+
+  .fs-product__title {
+    font-size: var(--fs-font-size-h2);
+    margin-bottom: var(--fs-space-md);
+  }
+
+  .fs-product__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--fs-space-sm);
+    margin-bottom: var(--fs-space-sm);
+    flex-wrap: wrap;
+  }
+
+  .fs-product__price {
+    font-size: 1.25rem;
+    font-weight: var(--fs-font-weight-semibold);
+  }
+
+  .fs-product__compare-price {
+    font-size: var(--fs-font-size-body);
+    text-decoration: line-through;
+    color: var(--fs-color-text-light);
+  }
+
+  .fs-product__save-badge {
+    font-size: var(--fs-font-size-sm);
+    font-weight: var(--fs-font-weight-semibold);
+    color: var(--fs-color-sale);
+  }
+
+  .fs-product__unit-price {
+    font-size: var(--fs-font-size-sm);
+    color: var(--fs-color-text-light);
+    margin-bottom: var(--fs-space-md);
+  }
+
+  .fs-product__option {
+    margin-bottom: var(--fs-space-md);
+  }
+
+  .fs-product__option-label {
+    display: block;
+    font-size: var(--fs-font-size-sm);
+    font-weight: var(--fs-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--fs-letter-spacing-sm);
+    margin-bottom: var(--fs-space-sm);
+  }
+
+  .fs-product__option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fs-space-sm);
+  }
+
+  .fs-variant-swatch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--fs-color-border);
+    font-size: var(--fs-font-size-sm);
+    cursor: pointer;
+    transition: all var(--fs-transition);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fs-variant-swatch input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .fs-variant-swatch.is-selected,
+  .fs-variant-swatch:hover {
+    border-color: var(--fs-color-accent);
+    background: var(--fs-color-accent);
+    color: var(--fs-color-white);
+  }
+
+  .fs-product__actions {
+    display: flex;
+    gap: var(--fs-space-md);
+    margin: var(--fs-space-lg) 0;
+  }
+
+  .fs-product__quantity {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--fs-color-border);
+  }
+
+  .fs-qty-btn {
+    width: 40px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.125rem;
+    color: var(--fs-color-text);
+  }
+
+  .fs-qty-input {
+    width: 48px;
+    height: 44px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid var(--fs-color-border);
+    border-right: 1px solid var(--fs-color-border);
+    font-family: var(--fs-font-family);
+    font-size: var(--fs-font-size-body);
+    -moz-appearance: textfield;
+  }
+
+  .fs-qty-input::-webkit-inner-spin-button,
+  .fs-qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .fs-product__add-btn { flex: 1; }
+
+  .fs-product__dynamic-checkout {
+    margin-bottom: var(--fs-space-lg);
+  }
+
+  .fs-product__trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fs-space-md) var(--fs-space-lg);
+    padding: var(--fs-space-md) 0;
+    margin-bottom: var(--fs-space-md);
+    border-top: 1px solid var(--fs-color-border-light);
+    border-bottom: 1px solid var(--fs-color-border-light);
+  }
+
+  .fs-product__trust-item {
+    display: flex;
+    align-items: center;
+    gap: var(--fs-space-xs);
+    font-size: var(--fs-font-size-sm);
+    color: var(--fs-color-text-secondary);
+  }
+
+  .fs-product__trust-item svg { color: var(--fs-color-accent); }
+
+  /* Accordions */
+  .fs-product__accordion {
+    border-bottom: 1px solid var(--fs-color-border-light);
+  }
+
+  .fs-product__accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fs-space-md) 0;
+    cursor: pointer;
+    font-size: var(--fs-font-size-body);
+    font-weight: var(--fs-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--fs-letter-spacing-sm);
+    list-style: none;
+  }
+
+  .fs-product__accordion-header::-webkit-details-marker { display: none; }
+
+  .fs-product__accordion-header svg {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .fs-product__accordion[open] .fs-product__accordion-header svg {
+    transform: rotate(180deg);
+  }
+
+  .fs-product__accordion-body {
+    padding: 0 0 var(--fs-space-md);
+    font-size: var(--fs-font-size-sm);
+    color: var(--fs-color-text-secondary);
+    line-height: 1.8;
+  }
+
+  .fs-specs-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .fs-specs-table td {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--fs-color-border-light);
+    font-size: var(--fs-font-size-sm);
+  }
+
+  .fs-specs-table td:first-child {
+    font-weight: var(--fs-font-weight-medium);
+    width: 40%;
+    color: var(--fs-color-text);
+  }
+
+  .fs-specs-table td:last-child {
+    color: var(--fs-color-text-secondary);
+  }
+
+  .fs-product__sku {
+    font-size: var(--fs-font-size-xs);
+    color: var(--fs-color-text-light);
+    margin-top: var(--fs-space-md);
+  }
+</style>
+
+<script>
+  // Thumbnail switcher
+  document.querySelectorAll('.fs-product__thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const mainImg = document.querySelector('#fs-main-image img');
+      if (mainImg) mainImg.src = thumb.dataset.imageUrl;
+      document.querySelectorAll('.fs-product__thumb').forEach(t => t.classList.remove('is-active'));
+      thumb.classList.add('is-active');
+    });
+  });
+
+  // Quantity buttons
+  document.querySelectorAll('.fs-qty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.parentElement.querySelector('.fs-qty-input');
+      let val = parseInt(input.value) || 1;
+      if (btn.dataset.action === 'increase') val++;
+      else if (btn.dataset.action === 'decrease' && val > 1) val--;
+      input.value = val;
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "FS Product Page",
+  "tag": "div",
+  "class": "fs-product-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Description"
+        }
+      ]
+    },
+    {
+      "type": "specifications",
+      "name": "Specifications",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Specifications"
+        },
+        {
+          "type": "richtext",
+          "id": "specs_text",
+          "label": "Manual specs (overrides metafields)"
+        }
+      ]
+    },
+    {
+      "type": "shipping",
+      "name": "Shipping & Returns",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Shipping & Returns"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Free nationwide delivery on all orders. Most orders arrive within 3-5 working days. 30-day returns policy on unopened products.</p>"
+        }
+      ]
+    },
+    {
+      "type": "custom",
+      "name": "Custom accordion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Additional Info"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FS Product Page",
+      "blocks": [
+        { "type": "description" },
+        { "type": "specifications" },
+        { "type": "shipping" }
+      ]
+    }
+  ]
+}
+{% endschema %}

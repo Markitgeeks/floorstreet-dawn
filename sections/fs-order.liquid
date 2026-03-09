@@ -1,0 +1,67 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <nav class="fs-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.account_url }}">Account</a>
+      <span class="fs-breadcrumb__sep">/</span>
+      <span>{{ order.name }}</span>
+    </nav>
+
+    <h1 class="fs-section__title">{{ order.name }}</h1>
+    <p style="color: var(--fs-color-text-secondary); margin-bottom: var(--fs-space-xl);">
+      Placed on {{ order.created_at | date: '%B %d, %Y at %I:%M %p' }}
+    </p>
+
+    <table class="fs-specs-table" style="width: 100%; margin-bottom: var(--fs-space-xl);">
+      <thead>
+        <tr>
+          <td style="font-weight: var(--fs-font-weight-semibold);">Product</td>
+          <td style="font-weight: var(--fs-font-weight-semibold);">SKU</td>
+          <td style="font-weight: var(--fs-font-weight-semibold);">Price</td>
+          <td style="font-weight: var(--fs-font-weight-semibold);">Qty</td>
+          <td style="font-weight: var(--fs-font-weight-semibold);">Total</td>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for line_item in order.line_items -%}
+          <tr>
+            <td>
+              <a href="{{ line_item.url }}">{{ line_item.title }}</a>
+            </td>
+            <td>{{ line_item.sku }}</td>
+            <td>{{ line_item.final_price | money }}</td>
+            <td>{{ line_item.quantity }}</td>
+            <td>{{ line_item.final_line_price | money }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+
+    <div style="max-width: 400px; margin-left: auto;">
+      <div style="display: flex; justify-content: space-between; padding: var(--fs-space-sm) 0;">
+        <span>Subtotal</span><span>{{ order.line_items_subtotal_price | money }}</span>
+      </div>
+      {%- for shipping_method in order.shipping_methods -%}
+        <div style="display: flex; justify-content: space-between; padding: var(--fs-space-sm) 0; color: var(--fs-color-text-secondary);">
+          <span>Shipping ({{ shipping_method.title }})</span><span>{{ shipping_method.price | money }}</span>
+        </div>
+      {%- endfor -%}
+      {%- for tax_line in order.tax_lines -%}
+        <div style="display: flex; justify-content: space-between; padding: var(--fs-space-sm) 0; color: var(--fs-color-text-secondary);">
+          <span>Tax ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</span><span>{{ tax_line.price | money }}</span>
+        </div>
+      {%- endfor -%}
+      <div style="display: flex; justify-content: space-between; padding: var(--fs-space-md) 0; border-top: 2px solid var(--fs-color-accent); font-weight: var(--fs-font-weight-semibold);">
+        <span>Total</span><span>{{ order.total_net_amount | money }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Order",
+  "tag": "div",
+  "class": "fs-order-section",
+  "settings": []
+}
+{% endschema %}

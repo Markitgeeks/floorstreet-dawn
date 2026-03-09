@@ -1,0 +1,86 @@
+{%- if cart.item_count > 0 -%}
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <h1 class="fs-section__title">Your Cart</h1>
+
+    <form action="{{ routes.cart_url }}" method="post" id="fs-cart-form">
+      <div class="fs-cart__layout">
+        <div class="fs-cart__items">
+          {%- for item in cart.items -%}
+            <div class="fs-cart-item">
+              <div class="fs-cart-item__image">
+                <a href="{{ item.url }}">
+                  {{ item.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: item.title }}
+                </a>
+              </div>
+              <div class="fs-cart-item__details">
+                <a href="{{ item.url }}" class="fs-cart-item__title">{{ item.product.title }}</a>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="fs-cart-item__variant">{{ item.variant.title }}</p>
+                {%- endunless -%}
+                <div class="fs-cart-item__price-row">
+                  <span class="fs-cart-item__price">{{ item.final_line_price | money }}</span>
+                  {%- if item.original_line_price != item.final_line_price -%}
+                    <span class="fs-cart-item__compare-price">{{ item.original_line_price | money }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="fs-cart-item__quantity">
+                <div class="fs-product__quantity">
+                  <button type="button" class="fs-qty-btn" data-action="decrease" aria-label="Decrease quantity" onclick="this.parentElement.querySelector('input').stepDown(); this.closest('form').submit();">-</button>
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" class="fs-qty-input" aria-label="Quantity for {{ item.title }}">
+                  <button type="button" class="fs-qty-btn" data-action="increase" aria-label="Increase quantity" onclick="this.parentElement.querySelector('input').stepUp(); this.closest('form').submit();">+</button>
+                </div>
+                <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" class="fs-cart-item__remove">Remove</a>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="fs-cart__summary">
+          {%- if settings.show_cart_note -%}
+            <div class="fs-cart__note">
+              <label for="cart-note">Order note</label>
+              <textarea id="cart-note" name="note">{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
+
+          <div class="fs-cart__totals">
+            <div class="fs-cart__subtotal">
+              <span>Subtotal</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+            <p class="fs-cart__shipping-note">Shipping & taxes calculated at checkout</p>
+          </div>
+
+          <button type="submit" name="checkout" class="fs-btn fs-btn--primary fs-btn--lg fs-cart__checkout-btn">
+            Checkout
+          </button>
+
+          <a href="{{ routes.all_products_collection_url }}" class="fs-cart__continue">Continue Shopping</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+{%- else -%}
+
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width" style="text-align: center; padding: var(--fs-space-4xl) 0;">
+    <h1 class="fs-section__title">Your Cart is Empty</h1>
+    <p style="color: var(--fs-color-text-secondary); margin-bottom: var(--fs-space-xl);">Looks like you haven't added anything yet.</p>
+    <a href="{{ routes.all_products_collection_url }}" class="fs-btn fs-btn--primary">Start Shopping</a>
+  </div>
+</section>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FS Cart",
+  "tag": "div",
+  "class": "fs-cart-section",
+  "settings": []
+}
+{% endschema %}

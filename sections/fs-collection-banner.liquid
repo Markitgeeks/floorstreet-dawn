@@ -1,0 +1,48 @@
+{%- liquid
+  assign show_collection_image = section.settings.show_collection_image
+  assign show_description = section.settings.show_description
+-%}
+
+{%- if collection -%}
+<div class="fs-collection-banner">
+  {%- if show_collection_image and collection.image -%}
+    {{ collection.image | image_url: width: 1600 | image_tag:
+      class: 'fs-collection-banner__image',
+      loading: 'eager',
+      sizes: '100vw',
+      widths: '600,800,1200,1600',
+      alt: collection.title
+    }}
+  {%- endif -%}
+
+  <div class="fs-collection-banner__content">
+    <h1 class="fs-collection-banner__title">{{ collection.title }}</h1>
+    {%- if show_description and collection.description != blank -%}
+      <div class="fs-collection-banner__count">{{ collection.description | strip_html | truncate: 120 }}</div>
+    {%- endif -%}
+    <span class="fs-collection-banner__count">{{ collection.products_count }} products</span>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FS Collection Banner",
+  "tag": "section",
+  "class": "fs-collection-banner-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

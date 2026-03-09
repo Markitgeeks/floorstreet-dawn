@@ -1,0 +1,68 @@
+{%- liquid
+  assign posts_per_page = section.settings.posts_per_page | default: 12
+-%}
+
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <h1 class="fs-section__title">{{ blog.title }}</h1>
+
+    {%- paginate blog.articles by posts_per_page -%}
+      <div class="fs-blog-grid">
+        {%- for article in blog.articles -%}
+          <article class="fs-blog-card">
+            {%- if article.image -%}
+              <a href="{{ article.url }}" class="fs-blog-card__image">
+                {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 1000px) 33vw, (min-width: 700px) 50vw, 100vw', widths: '300,400,600', alt: article.title }}
+              </a>
+            {%- endif -%}
+            <div class="fs-blog-card__content">
+              <h2 class="fs-blog-card__title">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h2>
+              <p class="fs-blog-card__date">{{ article.published_at | date: '%B %d, %Y' }}</p>
+              <p class="fs-blog-card__excerpt">{{ article.excerpt_or_content | strip_html | truncate: 150 }}</p>
+              <a href="{{ article.url }}" class="fs-blog-card__link">Read More</a>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="fs-pagination" aria-label="Pagination">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" class="fs-pagination__link">&laquo; Prev</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}" class="fs-pagination__link">{{ part.title }}</a>
+            {%- else -%}
+              <span class="fs-pagination__link is-current" aria-current="page">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="fs-pagination__link">Next &raquo;</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Blog",
+  "tag": "div",
+  "class": "fs-blog-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 12
+    }
+  ]
+}
+{% endschema %}

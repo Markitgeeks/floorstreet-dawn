@@ -1,0 +1,103 @@
+<section class="fs-testimonials" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.heading != blank -%}
+      <div class="fs-section__header">
+        <h2 class="fs-section__title">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="fs-testimonials__slider" data-autoplay="{{ section.settings.autoplay_speed }}">
+      <div class="fs-testimonials__track">
+        {%- for block in section.blocks -%}
+          <div class="fs-testimonial" {{ block.shopify_attributes }}>
+            <div class="fs-testimonial__stars">
+              {%- for i in (1..block.settings.stars) -%}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {%- endfor -%}
+            </div>
+            <blockquote class="fs-testimonial__quote">
+              "{{ block.settings.quote }}"
+            </blockquote>
+            <cite class="fs-testimonial__author">{{ block.settings.author }}</cite>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.blocks.size > 1 -%}
+        <div class="fs-testimonials__dots">
+          {%- for block in section.blocks -%}
+            <button class="fs-testimonials__dot{% if forloop.first %} is-active{% endif %}"
+              aria-label="Go to review {{ forloop.index }}"></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Testimonials",
+  "tag": "div",
+  "class": "fs-testimonials-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed (ms)",
+      "min": 2000,
+      "max": 10000,
+      "step": 500,
+      "default": 5000,
+      "unit": "ms"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Review quote",
+          "default": "Absolutely stunning flooring! The quality exceeded my expectations and delivery was incredibly fast."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "Sarah M."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FS Testimonials",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial", "settings": { "quote": "Best flooring company we've ever used. Professional service from start to finish.", "author": "James T." } },
+        { "type": "testimonial", "settings": { "quote": "Great value for money. The buy now pay later option made it so easy.", "author": "Emma R." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

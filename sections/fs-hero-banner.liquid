@@ -1,0 +1,168 @@
+{%- liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign button_text = section.settings.button_text
+  assign button_url = section.settings.button_url
+  assign image = section.settings.image
+  assign image_mobile = section.settings.image_mobile
+  assign overlay_opacity = section.settings.overlay_opacity | divided_by: 100.0
+  assign content_position = section.settings.content_position
+-%}
+
+<section class="fs-hero" data-section-id="{{ section.id }}">
+  <div class="fs-hero__image-wrapper"
+    style="min-height: {{ section.settings.height_mobile }}px;"
+  >
+    {%- if image != blank -%}
+      {{ image | image_url: width: 2000 | image_tag:
+        class: 'fs-hero__image hide-mobile',
+        loading: 'eager',
+        fetchpriority: 'high',
+        sizes: '100vw',
+        widths: '600,800,1000,1200,1600,2000',
+        alt: heading
+      }}
+      {%- if image_mobile != blank -%}
+        {{ image_mobile | image_url: width: 800 | image_tag:
+          class: 'fs-hero__image hide-desktop',
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw',
+          widths: '400,600,800',
+          alt: heading
+        }}
+      {%- else -%}
+        {{ image | image_url: width: 800 | image_tag:
+          class: 'fs-hero__image hide-desktop',
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw',
+          widths: '400,600,800',
+          alt: heading
+        }}
+      {%- endif -%}
+    {%- else -%}
+      <div style="background: #e8e8e8; width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+        <span style="color: #999; font-size: 1rem;">Upload a hero image</span>
+      </div>
+    {%- endif -%}
+
+    {%- if overlay_opacity > 0 -%}
+      <div style="position: absolute; inset: 0; background: rgba(0,0,0,{{ overlay_opacity }}); pointer-events: none; z-index: 1;"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="fs-hero__content" style="text-align: {{ content_position }};">
+    {%- if subheading != blank -%}
+      <p class="fs-hero__subtitle">{{ subheading }}</p>
+    {%- endif -%}
+
+    {%- if heading != blank -%}
+      <h1 class="fs-hero__title">{{ heading }}</h1>
+    {%- endif -%}
+
+    {%- if button_text != blank -%}
+      <div class="fs-hero__cta">
+        <a href="{{ button_url }}" class="fs-btn fs-btn--white fs-btn--lg">{{ button_text }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  @media (min-width: 700px) {
+    #shopify-section-{{ section.id }} .fs-hero__image-wrapper {
+      min-height: {{ section.settings.height_desktop }}px !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "FS Hero Banner",
+  "tag": "div",
+  "class": "fs-hero-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Hero image (mobile)",
+      "info": "Optional. Falls back to desktop image."
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "Desktop height (px)",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Mobile height (px)",
+      "min": 250,
+      "max": 600,
+      "step": 25,
+      "default": 400,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay darkness",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 30,
+      "unit": "%"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Buy Now, Pay Later"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Step Into The Spring Sale — Up To 60% Off"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FS Hero Banner"
+    }
+  ]
+}
+{% endschema %}

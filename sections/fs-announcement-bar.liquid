@@ -1,0 +1,108 @@
+{%- if section.settings.show_announcement -%}
+<div class="fs-announcement" style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+  <div class="fs-announcement__inner">
+    <span class="fs-announcement__text">
+      {{ section.settings.text }}
+    </span>
+
+    {%- if section.settings.show_countdown and section.settings.countdown_date != blank -%}
+      <div class="fs-countdown" data-countdown data-end-date="{{ section.settings.countdown_date }}" data-expired-hide="{{ section.settings.hide_when_expired }}">
+        <div class="fs-countdown__block">
+          <span class="fs-countdown__number" data-days>00</span>
+          <span class="fs-countdown__label">Day</span>
+        </div>
+        <span class="fs-countdown__sep">:</span>
+        <div class="fs-countdown__block">
+          <span class="fs-countdown__number" data-hours>00</span>
+          <span class="fs-countdown__label">Hrs</span>
+        </div>
+        <span class="fs-countdown__sep">:</span>
+        <div class="fs-countdown__block">
+          <span class="fs-countdown__number" data-mins>00</span>
+          <span class="fs-countdown__label">Min</span>
+        </div>
+        <span class="fs-countdown__sep">:</span>
+        <div class="fs-countdown__block">
+          <span class="fs-countdown__number" data-secs>00</span>
+          <span class="fs-countdown__label">Sec</span>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.link_text != blank -%}
+      <a href="{{ section.settings.link_url }}" class="fs-announcement__link" style="color: {{ section.settings.text_color }}; text-decoration: underline;">
+        {{ section.settings.link_text }}
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FS Announcement Bar",
+  "tag": "section",
+  "class": "fs-announcement-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Announcement text",
+      "default": "<p><strong>60% off</strong> best sellers & <strong>55% off</strong> everything else</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown timer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_date",
+      "label": "Countdown end date (ISO format)",
+      "info": "e.g. 2026-04-30T23:59:59",
+      "default": "2026-04-30T23:59:59"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_expired",
+      "label": "Hide bar when countdown expires",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#1c1c1c"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FS Announcement Bar"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main-list-collections": {
+      "type": "fs-list-collections",
+      "settings": {
+        "columns_desktop": 3
+      }
+    }
+  },
+  "order": ["main-list-collections"]
+}

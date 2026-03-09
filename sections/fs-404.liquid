@@ -1,0 +1,17 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width" style="text-align: center; padding: var(--fs-space-4xl) 0;">
+    <h1 style="font-size: clamp(3rem, 8vw, 6rem); font-weight: var(--fs-font-weight-bold); letter-spacing: var(--fs-letter-spacing); margin-bottom: var(--fs-space-md);">404</h1>
+    <p style="font-size: var(--fs-font-size-h3); color: var(--fs-color-text-secondary); margin-bottom: var(--fs-space-xl);">Page not found</p>
+    <p style="color: var(--fs-color-text-light); margin-bottom: var(--fs-space-xl);">The page you're looking for doesn't exist or has been moved.</p>
+    <a href="{{ routes.root_url }}" class="fs-btn fs-btn--primary">Back to Home</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS 404",
+  "tag": "div",
+  "class": "fs-404-section",
+  "settings": []
+}
+{% endschema %}

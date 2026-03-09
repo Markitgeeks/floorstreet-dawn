@@ -1,0 +1,33 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width" style="max-width: 700px;">
+    <h1 class="fs-section__title">Your Addresses</h1>
+
+    {%- if customer.addresses.size > 0 -%}
+      {%- for address in customer.addresses -%}
+        <div style="border: 1px solid var(--fs-color-border-light); padding: var(--fs-space-lg); margin-bottom: var(--fs-space-md);">
+          {%- if address == customer.default_address -%}
+            <span style="font-size: var(--fs-font-size-xs); text-transform: uppercase; letter-spacing: var(--fs-letter-spacing); color: var(--fs-color-text-light); display: block; margin-bottom: var(--fs-space-sm);">Default</span>
+          {%- endif -%}
+          <p>{{ address | format_address }}</p>
+          <div style="margin-top: var(--fs-space-md); display: flex; gap: var(--fs-space-md); font-size: var(--fs-font-size-sm);">
+            <a href="{{ routes.account_addresses_url }}/{{ address.id }}">Edit</a>
+            <button onclick="Shopify.postLink('{{ routes.account_addresses_url }}/{{ address.id }}', {'parameters': {'_method': 'delete'}, 'message': 'Are you sure?'})" style="background: none; border: none; color: var(--fs-color-sale); cursor: pointer; font-size: inherit; padding: 0;">Delete</button>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      <p style="color: var(--fs-color-text-secondary);">You haven't saved any addresses yet.</p>
+    {%- endif -%}
+
+    <a href="{{ routes.account_addresses_url }}/new" class="fs-btn fs-btn--primary" style="margin-top: var(--fs-space-lg);">Add New Address</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Addresses",
+  "tag": "div",
+  "class": "fs-addresses-section",
+  "settings": []
+}
+{% endschema %}

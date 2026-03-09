@@ -1,0 +1,52 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <h1 class="fs-section__title">Search</h1>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" style="margin-bottom: var(--fs-space-xl);">
+      <div class="fs-newsletter__form">
+        <input type="search" name="q" value="{{ search.terms | escape }}" class="fs-newsletter__input" placeholder="Search for products..." aria-label="Search" style="background: #fff;">
+        <button type="submit" class="fs-newsletter__submit">Search</button>
+      </div>
+    </form>
+
+    {%- if search.performed -%}
+      {%- if search.results_count > 0 -%}
+        <p style="margin-bottom: var(--fs-space-lg); color: var(--fs-color-text-secondary);">
+          {{ search.results_count }} results for "{{ search.terms }}"
+        </p>
+
+        <div class="fs-product-grid" style="--fs-product-columns-desktop: 4;">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'fs-product-card', product: item, show_sale_badge: true, show_secondary_image: true, show_quick_add: false %}
+            {%- else -%}
+              <div class="fs-product-card">
+                <div class="fs-product-card__info">
+                  <h3 class="fs-product-card__title">
+                    <a href="{{ item.url }}">{{ item.title }}</a>
+                  </h3>
+                  <p style="font-size: var(--fs-font-size-sm); color: var(--fs-color-text-secondary);">
+                    {{ item.content | strip_html | truncate: 120 }}
+                  </p>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p style="text-align: center; color: var(--fs-color-text-secondary); padding: var(--fs-space-2xl) 0;">
+          No results found for "{{ search.terms }}". Try a different search term.
+        </p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Search",
+  "tag": "div",
+  "class": "fs-search-section",
+  "settings": []
+}
+{% endschema %}

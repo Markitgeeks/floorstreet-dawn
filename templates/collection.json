@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "banner": {
+      "type": "fs-collection-banner",
+      "settings": {
+        "show_collection_image": true,
+        "show_description": true
+      }
+    },
+    "product-grid": {
+      "type": "fs-collection-grid",
+      "settings": {
+        "products_per_page": 24,
+        "columns_desktop": 4,
+        "show_sale_badge": true,
+        "show_secondary_image": true,
+        "enable_sorting": true,
+        "enable_filtering": true
+      }
+    }
+  },
+  "order": ["banner", "product-grid"]
+}

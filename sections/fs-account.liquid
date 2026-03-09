@@ -1,0 +1,59 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: var(--fs-space-md); margin-bottom: var(--fs-space-xl);">
+      <h1 class="fs-section__title" style="margin-bottom: 0;">My Account</h1>
+      <a href="{{ routes.account_logout_url }}" class="fs-btn fs-btn--secondary">Log Out</a>
+    </div>
+
+    <div class="fs-account__grid">
+      <div>
+        <h2 style="font-size: var(--fs-font-size-h3); margin-bottom: var(--fs-space-md);">Order History</h2>
+        {%- if customer.orders.size > 0 -%}
+          <table class="fs-specs-table" style="width: 100%;">
+            <thead>
+              <tr>
+                <td style="font-weight: var(--fs-font-weight-semibold);">Order</td>
+                <td style="font-weight: var(--fs-font-weight-semibold);">Date</td>
+                <td style="font-weight: var(--fs-font-weight-semibold);">Status</td>
+                <td style="font-weight: var(--fs-font-weight-semibold);">Total</td>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for order in customer.orders -%}
+                <tr>
+                  <td><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                  <td>{{ order.created_at | date: '%B %d, %Y' }}</td>
+                  <td>{{ order.fulfillment_status_label }}</td>
+                  <td>{{ order.total_net_amount | money }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        {%- else -%}
+          <p style="color: var(--fs-color-text-secondary);">You haven't placed any orders yet.</p>
+        {%- endif -%}
+      </div>
+
+      <div>
+        <h2 style="font-size: var(--fs-font-size-h3); margin-bottom: var(--fs-space-md);">Account Details</h2>
+        <p>{{ customer.name }}</p>
+        <p style="color: var(--fs-color-text-secondary);">{{ customer.email }}</p>
+        {%- if customer.default_address -%}
+          <p style="margin-top: var(--fs-space-md); color: var(--fs-color-text-secondary);">
+            {{ customer.default_address | format_address }}
+          </p>
+        {%- endif -%}
+        <a href="{{ routes.account_addresses_url }}" style="display: inline-block; margin-top: var(--fs-space-md); font-size: var(--fs-font-size-sm);">Manage Addresses</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Account",
+  "tag": "div",
+  "class": "fs-account-section",
+  "settings": []
+}
+{% endschema %}

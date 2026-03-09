@@ -1,0 +1,40 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width" style="max-width: 480px;">
+    <h1 class="fs-section__title" style="text-align: center;">Login</h1>
+
+    {%- form 'customer_login' -%}
+      {%- if form.errors -%}
+        <div style="color: var(--fs-color-sale); margin-bottom: var(--fs-space-md); text-align: center;">
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      <div class="fs-form-group">
+        <label for="customer-email">Email</label>
+        <input type="email" id="customer-email" name="customer[email]" autocomplete="email" required class="fs-input">
+      </div>
+
+      <div class="fs-form-group">
+        <label for="customer-password">Password</label>
+        <input type="password" id="customer-password" name="customer[password]" autocomplete="current-password" required class="fs-input">
+      </div>
+
+      <button type="submit" class="fs-btn fs-btn--primary fs-btn--lg" style="width: 100%; margin-top: var(--fs-space-md);">Sign In</button>
+
+      <div style="text-align: center; margin-top: var(--fs-space-lg); font-size: var(--fs-font-size-sm);">
+        <a href="{{ routes.account_recover_url }}">Forgot password?</a>
+        <span style="margin: 0 var(--fs-space-sm); color: var(--fs-color-text-light);">|</span>
+        <a href="{{ routes.account_register_url }}">Create account</a>
+      </div>
+    {%- endform -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Login",
+  "tag": "div",
+  "class": "fs-login-section",
+  "settings": []
+}
+{% endschema %}

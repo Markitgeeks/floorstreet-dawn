@@ -1,0 +1,29 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement-bar": {
+      "type": "fs-announcement-bar",
+      "settings": {
+        "show_announcement": true,
+        "text": "<p><strong>60% off<\/strong> best sellers & <strong>55% off<\/strong> everything else<\/p>",
+        "show_countdown": true,
+        "countdown_date": "2026-04-30T23:59:59",
+        "hide_when_expired": false,
+        "link_text": "Shop Best Sellers",
+        "link_url": "",
+        "bg_color": "#1c1c1c",
+        "text_color": "#ffffff"
+      }
+    },
+    "header": {
+      "type": "fs-header",
+      "settings": {
+        "logo_width": 140,
+        "menu": "main-menu",
+        "menu_right": ""
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

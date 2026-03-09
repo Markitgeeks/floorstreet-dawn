@@ -1,0 +1,17 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <h1 class="fs-section__title">{{ page.title }}</h1>
+    <div class="fs-page__content rte">
+      {{ page.content }}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Page",
+  "tag": "div",
+  "class": "fs-page-section",
+  "settings": []
+}
+{% endschema %}

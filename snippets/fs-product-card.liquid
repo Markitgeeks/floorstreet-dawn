@@ -1,0 +1,93 @@
+{%- comment -%}
+  Floor Street Product Card Snippet
+  Usage: {% render 'fs-product-card', product: product, show_sale_badge: true, show_secondary_image: true, show_quick_add: false %}
+{%- endcomment -%}
+
+{%- liquid
+  assign show_sale_badge = show_sale_badge | default: true
+  assign show_secondary_image = show_secondary_image | default: true
+  assign show_quick_add = show_quick_add | default: false
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign save_amount = product.compare_at_price | minus: product.price
+    assign save_percent = save_amount | times: 100.0 | divided_by: product.compare_at_price | round
+  endif
+  assign secondary_image = product.images[1]
+-%}
+
+<div class="fs-product-card" data-product-id="{{ product.id }}">
+  <div class="fs-product-card__media">
+    <a href="{{ product.url }}">
+      {%- if product.featured_image != blank -%}
+        {{ product.featured_image | image_url: width: 600 | image_tag:
+          class: 'fs-product-card__image',
+          loading: 'lazy',
+          sizes: '(min-width: 1000px) 25vw, (min-width: 700px) 33vw, 50vw',
+          widths: '300,400,500,600',
+          alt: product.title
+        }}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'fs-product-card__image' }}
+      {%- endif -%}
+
+      {%- if show_secondary_image and secondary_image != blank -%}
+        {{ secondary_image | image_url: width: 600 | image_tag:
+          class: 'fs-product-card__image fs-product-card__image--secondary',
+          loading: 'lazy',
+          sizes: '(min-width: 1000px) 25vw, (min-width: 700px) 33vw, 50vw',
+          widths: '300,400,500,600',
+          alt: product.title
+        }}
+      {%- endif -%}
+    </a>
+
+    {%- if show_sale_badge and on_sale -%}
+      <div class="fs-product-card__badges">
+        <span class="fs-badge fs-badge--sale">-{{ save_percent }}%</span>
+      </div>
+    {%- endif -%}
+
+    {%- if show_quick_add and product.available -%}
+      {%- if product.variants.size == 1 -%}
+        <form method="post" action="/cart/add">
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="fs-product-card__quick-add">
+            Add to Cart
+          </button>
+        </form>
+      {%- else -%}
+        <a href="{{ product.url }}" class="fs-product-card__quick-add">
+          Choose Options
+        </a>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+
+  <div class="fs-product-card__info">
+    <h3 class="fs-product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    <div class="fs-product-card__price">
+      {%- if on_sale -%}
+        <span class="fs-product-card__price-current">{{ product.price | money }}</span>
+        <span class="fs-product-card__price-compare">{{ product.compare_at_price | money }}</span>
+        <span class="fs-product-card__price-save">Save {{ save_amount | money }}</span>
+      {%- else -%}
+        {%- if product.price_varies -%}
+          <span class="fs-product-card__price-current">From {{ product.price_min | money }}</span>
+        {%- else -%}
+          <span class="fs-product-card__price-current">{{ product.price | money }}</span>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    {%- if product.metafields.custom.unit_price != blank -%}
+      <div class="fs-product-card__unit-price">
+        {{ product.metafields.custom.unit_price }} per m&sup2;
+      </div>
+    {%- endif -%}
+  </div>
+</div>

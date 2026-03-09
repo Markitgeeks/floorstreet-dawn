@@ -1,0 +1,38 @@
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width" style="max-width: 480px;">
+    <h1 class="fs-section__title" style="text-align: center;">Activate Account</h1>
+    <p style="text-align: center; color: var(--fs-color-text-secondary); margin-bottom: var(--fs-space-xl);">Create a password to activate your account.</p>
+
+    {%- form 'activate_customer_password' -%}
+      {%- if form.errors -%}
+        <div style="color: var(--fs-color-sale); margin-bottom: var(--fs-space-md); text-align: center;">
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      <div class="fs-form-group">
+        <label for="activate-password">Password</label>
+        <input type="password" id="activate-password" name="customer[password]" autocomplete="new-password" required class="fs-input">
+      </div>
+
+      <div class="fs-form-group">
+        <label for="activate-password-confirm">Confirm password</label>
+        <input type="password" id="activate-password-confirm" name="customer[password_confirmation]" autocomplete="new-password" required class="fs-input">
+      </div>
+
+      <button type="submit" class="fs-btn fs-btn--primary fs-btn--lg" style="width: 100%; margin-top: var(--fs-space-md);">Activate Account</button>
+      <p style="text-align: center; margin-top: var(--fs-space-lg); font-size: var(--fs-font-size-sm);">
+        <a href="{{ routes.account_login_url }}">Decline invitation</a>
+      </p>
+    {%- endform -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Activate Account",
+  "tag": "div",
+  "class": "fs-activate-section",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "fs-login",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,122 @@
+{
+  "sections": {
+    "hero": {
+      "type": "fs-hero-banner",
+      "settings": {
+        "height_desktop": 600,
+        "height_mobile": 400,
+        "overlay_opacity": 30,
+        "heading": "Buy Now, Pay Later",
+        "subheading": "Step Into The Spring Sale — Up To 60% Off",
+        "button_text": "Shop Best Sellers",
+        "button_url": "/collections/best-sellers",
+        "content_position": "center"
+      }
+    },
+    "trust-badges": {
+      "type": "fs-trust-badges",
+      "blocks": {
+        "badge_bnpl": {
+          "type": "badge",
+          "settings": {
+            "icon": "payment",
+            "title": "Buy Now, Pay Later",
+            "text": "Klarna Available"
+          }
+        },
+        "badge_price": {
+          "type": "badge",
+          "settings": {
+            "icon": "price",
+            "title": "Price Match",
+            "text": "Guarantee"
+          }
+        },
+        "badge_reviews": {
+          "type": "badge",
+          "settings": {
+            "icon": "reviews",
+            "title": "5 Star Reviews",
+            "text": "Trusted by Thousands"
+          }
+        },
+        "badge_shipping": {
+          "type": "badge",
+          "settings": {
+            "icon": "shipping",
+            "title": "Free Delivery",
+            "text": "Fast Nationwide"
+          }
+        }
+      },
+      "block_order": ["badge_bnpl", "badge_price", "badge_reviews", "badge_shipping"]
+    },
+    "testimonials": {
+      "type": "fs-testimonials",
+      "settings": {
+        "heading": "What Our Customers Say",
+        "autoplay_speed": 5000
+      },
+      "blocks": {
+        "review_1": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "Absolutely stunning flooring! The quality exceeded my expectations and delivery was incredibly fast.",
+            "author": "Sarah M."
+          }
+        },
+        "review_2": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "Best flooring company we've ever used. Professional service from start to finish.",
+            "author": "James T."
+          }
+        },
+        "review_3": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "Great value for money. The buy now pay later option made it so easy.",
+            "author": "Emma R."
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3"]
+    },
+    "featured-collection": {
+      "type": "fs-featured-collection",
+      "settings": {
+        "heading": "Our Best Sellers",
+        "subheading": "",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_sale_badge": true,
+        "show_secondary_image": true,
+        "show_quick_add": false,
+        "show_view_all": true,
+        "view_all_text": "View All"
+      }
+    },
+    "image-with-text": {
+      "type": "fs-image-with-text",
+      "settings": {
+        "layout": "image_left",
+        "heading": "Transform Your Space",
+        "text": "<p>Discover our premium range of flooring — from engineered wood and laminate to luxury vinyl. All with free nationwide delivery and a price match guarantee.</p>",
+        "button_text": "Explore Collections",
+        "button_url": "/collections",
+        "remove_top_padding": false,
+        "remove_bottom_padding": false
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "trust-badges",
+    "testimonials",
+    "featured-collection",
+    "image-with-text"
+  ]
+}

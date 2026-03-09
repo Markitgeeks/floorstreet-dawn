@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "fs-order",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

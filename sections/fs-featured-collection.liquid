@@ -1,0 +1,136 @@
+{%- liquid
+  assign collection = collections[section.settings.collection]
+  assign heading = section.settings.heading
+  assign products_to_show = section.settings.products_to_show
+  assign columns_desktop = section.settings.columns_desktop
+  assign show_sale_badge = section.settings.show_sale_badge
+  assign show_secondary_image = section.settings.show_secondary_image
+  assign show_quick_add = section.settings.show_quick_add
+-%}
+
+<section class="fs-section" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    {%- if heading != blank -%}
+      <div class="fs-section__header">
+        <h2 class="fs-section__title">{{ heading }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="fs-section__subtitle">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="fs-product-grid" style="--fs-product-columns-desktop: {{ columns_desktop }};">
+      {%- if collection != blank -%}
+        {%- for product in collection.products limit: products_to_show -%}
+          {% render 'fs-product-card',
+            product: product,
+            show_sale_badge: show_sale_badge,
+            show_secondary_image: show_secondary_image,
+            show_quick_add: show_quick_add
+          %}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..products_to_show) -%}
+          <div class="fs-product-card">
+            <div class="fs-product-card__media">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'fs-product-card__image' }}
+            </div>
+            <div class="fs-product-card__info">
+              <h3 class="fs-product-card__title"><a href="#">Sample Product {{ i }}</a></h3>
+              <div class="fs-product-card__price">
+                <span class="fs-product-card__price-current">{{ 2999 | money }}</span>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_view_all and collection != blank -%}
+      <div class="text-center" style="margin-top: var(--fs-space-xl);">
+        <a href="{{ collection.url }}" class="fs-btn fs-btn--secondary">
+          {{ section.settings.view_all_text | default: 'View All' }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FS Featured Collection",
+  "tag": "div",
+  "class": "fs-featured-collection-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show sale badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show second image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add button",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all button text",
+      "default": "View All"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FS Featured Collection"
+    }
+  ]
+}
+{% endschema %}

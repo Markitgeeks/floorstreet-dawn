@@ -1,0 +1,54 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "newsletter": {
+      "type": "fs-newsletter",
+      "settings": {
+        "heading": "Join Our Mailing List",
+        "subtext": "Subscribe for exclusive offers, new arrivals, and flooring tips.",
+        "placeholder": "Your email address",
+        "button_text": "Subscribe",
+        "bg_color": "#1c1c1c"
+      }
+    },
+    "footer": {
+      "type": "fs-footer",
+      "settings": {
+        "show_payment_icons": true,
+        "show_social": true
+      },
+      "blocks": {
+        "brand_block": {
+          "type": "brand",
+          "settings": {
+            "text": "<p>The UK's best flooring company. Fast and free nationwide delivery on every order.<\/p>"
+          }
+        },
+        "shop_menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "footer"
+          }
+        },
+        "help_menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "Help",
+            "menu": "footer"
+          }
+        },
+        "contact_col": {
+          "type": "text",
+          "settings": {
+            "heading": "Contact Us",
+            "text": "<p>Email: hello@floorstreet.co.uk<br>Phone: 0800 000 0000<\/p>"
+          }
+        }
+      },
+      "block_order": ["brand_block", "shop_menu", "help_menu", "contact_col"]
+    }
+  },
+  "order": ["newsletter", "footer"]
+}
